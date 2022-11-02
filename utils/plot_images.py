@@ -1,11 +1,9 @@
-# Plotting and stuff
 import torch
 import matplotlib.pyplot as plt
 from .dataloader import dataloaders, data_details
 from .gradcam import Extractor, GradCam
 import numpy as np
 import cv2
-
 
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda" if use_cuda else "cpu")
@@ -53,7 +51,7 @@ def inverse_normalize(tensor, mean=(0.49139968, 0.48215841, 0.44653091), std=(0.
 
 def image_prediction(data_name, model, title, n=20,r=5,c=4, misclassified = True, gradcam=False):
     model.eval()
-    _, test_loader = dataloaders(data_name, val_batch_size=1)
+    _, test_loader, _ = dataloaders(data_name, val_batch_size=1)
     classes = data_details(data_name, cols=5, rows=2, train_data=True, transform=False, vis = False)
     wrong = []
     right = []
@@ -64,27 +62,29 @@ def image_prediction(data_name, model, title, n=20,r=5,c=4, misclassified = True
             output = model(data)
             pred = output.argmax(dim=1, keepdim=True)
             correct = pred.eq(target.view_as(pred)).item()
-            if not correct:
+            if (not correct) and i <= n - 1:
                 wrong.append({
                     "data": data,
                     "target": target.item(),
                     "pred": pred.item()
                 })
-            else:
+                i+=1
+            elif j <= n - 1:
                 right.append({
                     "data": data,
                     "target": target.item(),
                     "pred": pred.item()       
                 })
+                j+=1
 
     if not(gradcam) and misclassified:
-        plot_pred_images(wrong[:n], title, classes, r, c)
+        plot_pred_images(wrong, title, classes, r, c)
 
     elif not(gradcam) and not(misclassified):
-        plot_pred_images(right[:n], title, classes, r, c)
+        plot_pred_images(right, title, classes, r, c)
 
     elif gradcam and misclassified:
-        plot_gradcam_images(model, wrong[:n], title, classes, r, c)
+        plot_gradcam_images(model, wrong, title, classes, r, c)
 
     else:
-        plot_gradcam_images(model, right[:n], title, classes, r, c)
+        plot_gradcam_images(model, right, title, classes, r, c)
