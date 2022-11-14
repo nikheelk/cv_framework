@@ -138,10 +138,14 @@ def dataloaders(data_name, train_batch_size = None, val_batch_size = None, seed=
         train_ds = MNISTDataset('./data', train=True, download=True, transform=train_transforms)
         test_ds = MNISTDataset('./data', train=False, download=True, transform=test_transforms)
     elif data_name == "CUSTOM":
-        train_transforms, test_transforms = get_transforms_CUSTOM(((0.5222, 0.4771, 0.3872), (0.2586, 0.2448, 0.2568)),
-                                                            ((0.5220, 0.4850, 0.3979), (0.2602, 0.2461, 0.2621)), 224)
+        # train_transforms, test_transforms = get_transforms_CUSTOM(((0.5222, 0.4771, 0.3872), (0.2586, 0.2448, 0.2568)),
+        #                                                     ((0.5220, 0.4850, 0.3979), (0.2602, 0.2461, 0.2621)), 224)
+        train_transforms, test_transforms = get_transforms_CUSTOM(((0.5224, 0.5004, 0.4221), (0.2902, 0.2863, 0.3046)),
+                                                            ((0.4937, 0.4823, 0.4084), (0.2820, 0.2822, 0.3006)), 224)
         train_ds = CustomDataset(train=True, transform=train_transforms)
         test_ds = CustomDataset(train=False, transform=test_transforms)
+        #Train date -- mean--[0.5224, 0.5004, 0.4221] std- [0.2902, 0.2863, 0.3046]
+        #Test data mean: tensor([0.4937, 0.4823, 0.4084]) std: tensor([0.2820, 0.2822, 0.3006])
     
     cuda = torch.cuda.is_available()
 
@@ -172,8 +176,10 @@ def data_details(data_name, cols = 5, rows = 2, train_data = True, transform = F
         transform = train_transforms if train_data else test_transforms if transform else None
         data = MNISTDataset('./data', train=train_data, download=True, transform=transform, viz=vis )
     elif data_name == "CUSTOM":
-        train_transforms, test_transforms = get_transforms_CUSTOM(((0.5222, 0.4771, 0.3872), (0.2586, 0.2448, 0.2568)),
-                                                            ((0.5220, 0.4850, 0.3979), (0.2602, 0.2461, 0.2621)), 224)
+        # train_transforms, test_transforms = get_transforms_CUSTOM(((0.5222, 0.4771, 0.3872), (0.2586, 0.2448, 0.2568)),
+        #                                                     ((0.5220, 0.4850, 0.3979), (0.2602, 0.2461, 0.2621)), 224)
+        train_transforms, test_transforms = get_transforms_CUSTOM(((0.5224, 0.5004, 0.4221), (0.2902, 0.2863, 0.3046)),
+                                                            ((0.4937, 0.4823, 0.4084), (0.2820, 0.2822, 0.3006)), 224)
         transform = train_transforms if train_data else test_transforms if transform else None
         data = CustomDataset(train=train_data, transform=transform, viz=vis)
     
